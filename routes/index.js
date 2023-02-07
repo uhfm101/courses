@@ -8,4 +8,7 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/courses', courseController.viewAll)
+
+router.get('/courses/profile/:id', courseController.viewProfile)
+
 module.exports = router;
