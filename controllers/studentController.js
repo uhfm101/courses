@@ -27,3 +27,30 @@ module.exports.updateStudent = async function(req, res){
     })
     res.redirect(`/students/profile/${req.params.id}`)
 }
+
+module.exports.renderAddForm = function (req, res){
+    const student = {
+        first_name: '',
+        last_name: '',
+        grade_level: 9,
+    }
+    res.render('student/add', {student})
+}
+
+module.exports.addStudent = async function(req, res){
+    const student = await Student.create({
+        first_name: req.body.first_name,
+        last_name: req.body.last_name,
+        grade_level: req.body.grade_level
+    })
+    res.redirect(`/students/profile/${student.id}`)
+}
+
+module.exports.deleteStudent = async function(req, res){
+    await Student.destroy({
+        where: {
+            id:req.params.id
+        }
+    })
+    res.redirect('/students')
+}
