@@ -1,4 +1,4 @@
-const {Course} = require('../models')
+const {Course, Student} = require('../models')
 const departments = ['Math', 'Computer Science', 'Science', 'Gym',].sort()
 
 module.exports.viewAll = async function(req, res){
@@ -10,7 +10,14 @@ module.exports.viewProfile = async function (req, res){
     const course = await Course.findByPk(req.params.id, {
         include: 'students'
     });
-    res.render('course/profile', {course})
+    const students = await Student.findAll();
+    let availableStudents = [];
+    for(let i=0; i<students.length; i++) {
+        if (!courseHasStudent(course, students[i])) {
+            availableStudents.push(students[i])
+        }
+    }
+    res.render('course/profile', {course, availableStudents})
 }
 
 module.exports.renderEditForm = async function (req, res){
@@ -59,4 +66,13 @@ module.exports.deleteCourse = async function(req, res){
         }
     })
     res.redirect('/courses')
+}
+
+function courseHasStudent(course, student){
+    for(let i = 0; i<course.students.length; i++){
+        if (student.id === course.students[i].id){
+            return true
+        }
+    }
+    return false
 }
