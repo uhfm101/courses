@@ -1,4 +1,4 @@
-const {Course, Student} = require('../models')
+const {Course, Student, StudentCourses} = require('../models')
 const departments = ['Math', 'Computer Science', 'Science', 'Gym',].sort()
 
 module.exports.viewAll = async function(req, res){
@@ -66,6 +66,24 @@ module.exports.deleteCourse = async function(req, res){
         }
     })
     res.redirect('/courses')
+}
+
+module.exports.enrollStudent = async function(req, res){
+    await StudentCourses.create({
+        student_id: req.body.student,
+        course_id: req.params.courseId
+    })
+    res.redirect(`/courses/profile/${req.params.courseId}`)
+}
+
+module.exports.removeStudent = async function(req, res){
+    await StudentCourses.destroy({
+        where: {
+            course_id: req.params.courseId,
+            student_id: req.params.studentId
+        }
+    })
+    res.redirect(`/courses/profile/${req.params.courseId}`)
 }
 
 function courseHasStudent(course, student){
